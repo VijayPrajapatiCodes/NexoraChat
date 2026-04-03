@@ -3,149 +3,268 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pulse Chat</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>Nexora Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  :root {
-    --pri: #8B5CF6; --pri2: #6D28D9; --acc: #EC4899; --acc2: #DB2777;
-    --bg: #0A0A0F; --bg2: #13131A; --bg3: #1C1C27; --bg4: #252535;
-    --text: #F0F0FF; --text2: #8B8BA8; --text3: #5A5A78;
-    --sent-bg: linear-gradient(135deg, #8B5CF6, #EC4899); --recv-bg: #1C1C27;
-    --online: #22D3EE; --offline: #4B5563; --safe: env(safe-area-inset-bottom, 0px);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --p1:#6C63FF;--p2:#4F46E5;--p3:#3730A3;
+  --a1:#06B6D4;--a2:#0891B2;
+  --g1:linear-gradient(135deg,#6C63FF,#06B6D4);
+  --g2:linear-gradient(135deg,#4F46E5,#7C3AED);
+  --bg:#0F0F1A;--bg2:#171728;--bg3:#1E1E32;--bg4:#252540;--bg5:#2E2E50;
+  --t1:#F0F0FF;--t2:#9898C8;--t3:#55558A;
+  --online:#34D399;--offline:#3D3D60;
+  --safe:env(safe-area-inset-bottom,0px);
+  --ease:cubic-bezier(.4,0,.2,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--t1)}
+
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;transition:opacity .4s var(--ease),transform .4s var(--ease);z-index:1}
+.screen.hidden{opacity:0;pointer-events:none;transform:translateY(20px)}
+
+/* ═══ LOGIN — centered card on desktop, full screen on mobile ═══ */
+#loginScreen{
+  background:var(--bg);
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+/* animated bg blobs */
+.lbg{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.lbg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(108,99,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.04) 1px,transparent 1px);background-size:44px 44px}
+.lbg-blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5}
+.lb1{width:420px;height:420px;background:radial-gradient(circle,rgba(108,99,255,.55),transparent 70%);top:-100px;left:-80px;animation:blobDrift 10s ease-in-out infinite alternate}
+.lb2{width:320px;height:320px;background:radial-gradient(circle,rgba(6,182,212,.4),transparent 70%);top:10%;right:-60px;animation:blobDrift 14s ease-in-out infinite alternate-reverse}
+.lb3{width:260px;height:260px;background:radial-gradient(circle,rgba(124,58,237,.38),transparent 70%);bottom:10%;left:20%;animation:blobDrift 9s ease-in-out infinite alternate}
+@keyframes blobDrift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(22px,16px) scale(1.09)}}
+
+/* THE LOGIN CARD */
+.login-card{
+  position:relative;z-index:1;
+  width:100%;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+
+/* Mobile: full screen bottom sheet style */
+@media(max-width:599px){
+  #loginScreen{align-items:stretch;justify-content:flex-end}
+  .login-card{
+    background:rgba(23,23,40,.97);
+    border-radius:0;
+    max-height:100%;
   }
-  html, body { height: 100%; overflow: hidden; }
-  body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text); }
+  .login-hero{
+    flex:1;
+    min-height:200px;
+  }
+}
 
-  .screen { position: fixed; inset: 0; display: flex; flex-direction: column; transition: opacity .35s, transform .35s; }
-  .screen.hidden { opacity: 0; pointer-events: none; transform: translateY(24px); }
+/* Desktop: floating card */
+@media(min-width:600px){
+  .login-card{
+    max-width:420px;
+    border-radius:28px;
+    background:rgba(23,23,40,.97);
+    backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
+    border:1px solid rgba(108,99,255,.18);
+    box-shadow:0 32px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04),inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  .login-hero{padding:28px 24px 8px}
+}
 
-  #loginScreen { background: var(--bg); align-items: stretch; justify-content: flex-end; overflow: hidden; }
-  .login-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(139,92,246,.35) 0%, transparent 70%), radial-gradient(ellipse 60% 50% at 80% 110%, rgba(236,72,153,.25) 0%, transparent 60%); }
-  .login-glow { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(139,92,246,.18) 0%, transparent 70%); animation: breathe 4s ease-in-out infinite; }
-  @keyframes breathe { 0%,100%{transform:translateX(-50%) scale(1)} 50%{transform:translateX(-50%) scale(1.15)} }
-  .login-logo { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 1; }
-  .login-logo .icon { width: 72px; height: 72px; border-radius: 22px; background: linear-gradient(135deg, #8B5CF6, #EC4899); display: flex; align-items: center; justify-content: center; font-size: 34px; margin: 0 auto 14px; box-shadow: 0 8px 32px rgba(139,92,246,.45); }
-  .login-logo h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
-  .login-logo span { font-size: 13px; color: var(--text2); font-weight: 300; }
-  .login-card { position: relative; background: var(--bg2); border-radius: 28px 28px 0 0; padding: 32px 24px calc(32px + var(--safe)); display: flex; flex-direction: column; gap: 14px; border-top: 1px solid rgba(255,255,255,.06); box-shadow: 0 -24px 80px rgba(0,0,0,.5); z-index: 1; }
-  .login-card h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
-  .login-card p { font-size: 13px; color: var(--text2); margin-top: -8px; }
-  .inp-wrap { position: relative; }
-  .inp-wrap .flag { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 20px; pointer-events: none; }
-  .inp-wrap .prefix { position: absolute; left: 46px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--text2); pointer-events: none; font-weight: 500; }
-  .login-card input { width: 100%; padding: 15px 16px 15px 80px; border-radius: 16px; border: 1.5px solid var(--bg4); background: var(--bg3); color: var(--text); font-size: 16px; font-family: 'Sora', sans-serif; outline: none; transition: border-color .2s, box-shadow .2s; -webkit-appearance: none; }
-  .login-card input:focus { border-color: var(--pri); box-shadow: 0 0 0 3px rgba(139,92,246,.18); }
-  .login-card input::placeholder { color: var(--text3); }
-  .login-btn { padding: 16px; border-radius: 16px; border: none; background: linear-gradient(135deg, #8B5CF6, #EC4899); color: #fff; font-size: 16px; font-family: 'Sora', sans-serif; font-weight: 600; cursor: pointer; margin-top: 4px; box-shadow: 0 8px 24px rgba(139,92,246,.35); transition: opacity .2s, transform .1s; letter-spacing: 0.3px; }
-  .login-btn:active { opacity: .85; transform: scale(.98); }
-  #loginError { color: #F87171; font-size: 12.5px; text-align: center; display: none; margin-top: -6px; }
+.login-hero{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:24px 20px 8px;
+  padding-top:calc(24px + env(safe-area-inset-top,0px));
+}
 
-  #chatScreen { background: var(--bg); }
-  .chat-header { background: var(--bg2); padding: 14px 16px 12px; padding-top: calc(14px + env(safe-area-inset-top, 0px)); display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,.05); flex-shrink: 0; position: relative; z-index: 10; }
-  .peer-info { flex: 1; display: flex; align-items: center; gap: 10px; }
-  .avatar-wrap { position: relative; flex-shrink: 0; }
-  .avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6, #EC4899); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #fff; }
-  .status-dot { position: absolute; bottom: 1px; right: 1px; width: 11px; height: 11px; border-radius: 50%; background: var(--offline); border: 2px solid var(--bg2); transition: background .4s; }
-  .status-dot.online { background: var(--online); box-shadow: 0 0 8px rgba(34,211,238,.6); }
-  .peer-details .name { font-size: 15px; font-weight: 600; line-height: 1.2; }
-  .peer-details .status-txt { font-size: 12px; color: var(--text2); transition: color .3s; }
-  .peer-details .status-txt.online { color: var(--online); }
-  .e2ee-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; color: #22D3EE; background: rgba(34,211,238,.08); border: 1px solid rgba(34,211,238,.2); border-radius: 10px; padding: 2px 7px; margin-left: 4px; vertical-align: middle; opacity: 0; transition: opacity .4s; }
-  .e2ee-badge.active { opacity: 1; }
-  .header-actions { display: flex; gap: 4px; }
-  .hdr-btn { background: none; border: none; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text2); cursor: pointer; transition: background .15s, color .15s; }
-  .hdr-btn:active { background: var(--bg3); color: var(--text); }
+.logo-stack{position:relative;width:80px;height:80px;margin-bottom:16px}
+.logo-ring1{position:absolute;inset:-11px;border-radius:50%;border:1px solid rgba(108,99,255,.22);animation:spinR 20s linear infinite}
+.logo-ring2{position:absolute;inset:-5px;border-radius:50%;border:1px dashed rgba(6,182,212,.18);animation:spinR 14s linear infinite reverse}
+.logo-ring1::before,.logo-ring2::before{content:'';position:absolute;width:6px;height:6px;border-radius:50%;top:-3px;left:50%;transform:translateX(-50%)}
+.logo-ring1::before{background:var(--p1)}.logo-ring2::before{background:var(--a1)}
+@keyframes spinR{to{transform:rotate(360deg)}}
+.logo-box{width:80px;height:80px;border-radius:26px;background:var(--g1);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 40px rgba(108,99,255,.4),inset 0 1px 0 rgba(255,255,255,.2);position:relative;z-index:1;animation:logoFloat 5s ease-in-out infinite}
+@keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.logo-box svg{width:40px;height:40px}
+.brand-name{font-size:26px;font-weight:700;letter-spacing:-.5px}
+.brand-name span{background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.brand-tag{font-size:11px;color:var(--t3);margin-top:6px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.feature-chips{display:flex;gap:7px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+.chip{font-size:10.5px;color:rgba(108,99,255,.95);background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.22);border-radius:100px;padding:4px 12px;font-weight:600;letter-spacing:.03em}
 
-  #chatBox { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px 14px; display: flex; flex-direction: column; gap: 6px; -webkit-overflow-scrolling: touch; }
-  #chatBox::-webkit-scrollbar { display: none; }
-  .msg { max-width: 78%; padding: 10px 14px; border-radius: 18px; font-size: 14px; line-height: 1.55; word-break: break-word; animation: msgIn .25s ease forwards; position: relative; }
-  @keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-  .msg.sent { background: linear-gradient(135deg, #8B5CF6, #EC4899); align-self: flex-end; border-bottom-right-radius: 5px; box-shadow: 0 4px 16px rgba(139,92,246,.3); color: #fff; }
-  .msg.received { background: var(--bg3); align-self: flex-start; border-bottom-left-radius: 5px; color: var(--text); border: 1px solid rgba(255,255,255,.05); }
-  .msg .ts { font-size: 10.5px; opacity: .65; text-align: right; margin-top: 4px; display: block; }
-  .msg.system { align-self: center; background: rgba(255,255,255,.05); color: var(--text2); font-size: 11.5px; padding: 5px 14px; border-radius: 20px; max-width: 90%; text-align: center; border: none; box-shadow: none; }
-  .date-sep { align-self: center; font-size: 11px; color: var(--text3); background: var(--bg2); padding: 3px 12px; border-radius: 20px; margin: 6px 0; }
+.login-form{
+  padding:20px 20px calc(22px + var(--safe));
+  display:flex;flex-direction:column;gap:12px;
+  border-top:1px solid rgba(108,99,255,.1);
+  background:rgba(10,10,20,.35);
+}
+@media(min-width:600px){
+  .login-form{padding:20px 24px 26px;background:transparent}
+}
+.card-label{font-size:10px;font-weight:700;color:var(--p1);letter-spacing:.12em;text-transform:uppercase}
+.card-title{font-size:20px;font-weight:700;color:var(--t1);letter-spacing:-.3px;margin-top:2px}
+.card-sub{font-size:12.5px;color:var(--t3);margin-top:2px}
 
-  .chat-input-area { background: var(--bg2); padding: 10px 12px; padding-bottom: calc(10px + var(--safe)); display: flex; align-items: flex-end; gap: 10px; border-top: 1px solid rgba(255,255,255,.05); flex-shrink: 0; }
-  .input-box { flex: 1; background: var(--bg3); border-radius: 22px; border: 1.5px solid transparent; display: flex; align-items: flex-end; padding: 10px 14px; transition: border-color .2s; gap: 8px; }
-  .input-box:focus-within { border-color: rgba(139,92,246,.4); }
-  #msgInput { flex: 1; background: none; border: none; outline: none; color: var(--text); font-family: 'Sora', sans-serif; font-size: 14.5px; resize: none; max-height: 120px; line-height: 1.5; overflow-y: auto; min-height: 22px; }
-  #msgInput::placeholder { color: var(--text3); }
-  #sendBtn { width: 44px; height: 44px; border-radius: 50%; border: none; background: linear-gradient(135deg, #8B5CF6, #EC4899); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 16px rgba(139,92,246,.4); transition: transform .1s, box-shadow .1s; }
-  #sendBtn:active { transform: scale(.9); box-shadow: none; }
+.inp-wrap{position:relative}
+.inp-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:17px;z-index:2;pointer-events:none}
+.inp-pre{position:absolute;left:44px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--t3);pointer-events:none;font-weight:600;z-index:2}
+.login-form input{width:100%;padding:14px 14px 14px 78px;border-radius:14px;border:1.5px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);color:var(--t1);font-size:14.5px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;outline:none;transition:border-color .25s,background .25s,box-shadow .25s;-webkit-appearance:none}
+.login-form input:focus{border-color:rgba(108,99,255,.5);background:rgba(108,99,255,.07);box-shadow:0 0 0 3px rgba(108,99,255,.1)}
+.login-form input::placeholder{color:var(--t3)}
+.login-btn{padding:15px;border-radius:16px;border:none;background:var(--g1);color:#fff;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;cursor:pointer;letter-spacing:.2px;position:relative;overflow:hidden;box-shadow:0 8px 28px rgba(108,99,255,.35);transition:transform .15s,box-shadow .2s}
+.login-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,.18),transparent 60%);pointer-events:none}
+.login-btn:active{transform:scale(.97);box-shadow:0 4px 14px rgba(108,99,255,.25)}
+#loginError{color:#F87171;font-size:11.5px;text-align:center;display:none;font-weight:500}
+.trust-row{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;color:var(--t3);font-weight:500}
+.trust-dot{width:5px;height:5px;border-radius:50%;background:var(--online);box-shadow:0 0 5px rgba(52,211,153,.5);flex-shrink:0}
 
-  #callModal { position: fixed; inset: 0; background: rgba(0,0,0,.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); align-items: flex-end; justify-content: center; z-index: 1000; display: none; animation: fadeIn .3s; }
-  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-  .call-sheet { background: var(--bg2); border-radius: 28px 28px 0 0; padding: 28px 24px calc(40px + var(--safe)); width: 100%; max-width: 480px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; border-top: 1px solid rgba(255,255,255,.08); animation: slideUp .35s cubic-bezier(.25,.46,.45,.94); }
-  @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-  .ring-avatar { width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6, #EC4899); display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 700; color: #fff; animation: ringPulse 1.5s infinite; margin-bottom: 4px; }
-  @keyframes ringPulse { 0%,100%{box-shadow:0 0 0 0 rgba(139,92,246,.5)} 50%{box-shadow:0 0 0 22px rgba(139,92,246,0)} }
-  .call-sheet h3 { font-size: 22px; font-weight: 700; }
-  .call-sheet .call-num { color: var(--text2); font-size: 14px; }
-  .call-sheet .call-lbl { color: var(--text3); font-size: 13px; }
-  .modal-btns { display: flex; gap: 40px; margin-top: 12px; }
-  .modal-btns button { width: 70px; height: 70px; border-radius: 50%; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform .1s; }
-  .modal-btns button:active { transform: scale(.9); }
-  #acceptBtn { background: linear-gradient(135deg, #10B981, #059669); box-shadow: 0 8px 20px rgba(16,185,129,.4); }
-  #declineBtn { background: linear-gradient(135deg, #EF4444, #DC2626); box-shadow: 0 8px 20px rgba(239,68,68,.4); }
-  .modal-btn-lbl { font-size: 11px; color: var(--text2); margin-top: 6px; }
+/* ═══ CHAT — always full screen ═══ */
+#chatScreen{background:var(--bg)}
 
-  #callScreen { display: none; position: fixed; inset: 0; background: #000; flex-direction: column; align-items: center; justify-content: center; z-index: 999; }
-  #remoteVideo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #0d0d14; }
-  .call-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,.6) 0%, transparent 30%, transparent 60%, rgba(0,0,0,.8) 100%); z-index: 1; }
-  #localVideo { position: absolute; bottom: 130px; right: 16px; width: 110px; height: 150px; border-radius: 18px; object-fit: cover; border: 2px solid rgba(255,255,255,.25); z-index: 2; background: #1a1a2e; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
-  #callStatus { position: absolute; top: calc(60px + env(safe-area-inset-top,0px)); color: #fff; font-size: 18px; font-weight: 600; text-align: center; z-index: 2; text-shadow: 0 2px 12px rgba(0,0,0,.8); padding: 0 20px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  #callStatus .call-peer-name { font-size: 22px; font-weight: 700; }
-  #callStatus .call-state { font-size: 13px; font-weight: 400; color: rgba(255,255,255,.7); }
-  .call-controls { position: absolute; bottom: calc(40px + var(--safe)); display: flex; gap: 16px; z-index: 2; align-items: center; }
-  .ctrl-btn { width: 58px; height: 58px; border-radius: 50%; border: none; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform .1s, opacity .1s; backdrop-filter: blur(10px); }
-  .ctrl-btn:active { transform: scale(.88); }
-  #endBtn { width: 68px; height: 68px; font-size: 24px; background: linear-gradient(135deg, #EF4444, #DC2626); color: #fff; box-shadow: 0 8px 24px rgba(239,68,68,.5); }
-  #muteBtn, #camBtn { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.15); }
-  #muteBtn.muted, #camBtn.off { background: rgba(255,255,255,.35); }
+.chat-header{background:rgba(23,23,40,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);padding:13px 16px 11px;padding-top:calc(13px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(108,99,255,.1);flex-shrink:0;z-index:10;position:relative;box-shadow:0 4px 20px rgba(0,0,0,.25)}
+.peer-info{flex:1;display:flex;align-items:center;gap:11px}
+.avatar-wrap{position:relative;flex-shrink:0}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--g1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;box-shadow:0 4px 14px rgba(108,99,255,.3)}
+.status-dot{position:absolute;bottom:1px;right:1px;width:11px;height:11px;border-radius:50%;background:var(--offline);border:2.5px solid var(--bg2);transition:background .4s,box-shadow .4s}
+.status-dot.online{background:var(--online);box-shadow:0 0 7px rgba(52,211,153,.6)}
+.peer-details .name{font-size:14.5px;font-weight:700;color:var(--t1)}
+.peer-details .status-txt{font-size:11px;color:var(--t3);transition:color .3s;font-weight:400}
+.peer-details .status-txt.online{color:var(--online)}
+.e2ee-badge{display:inline-flex;align-items:center;gap:3px;font-size:8.5px;color:#34D399;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);border-radius:100px;padding:2px 7px;margin-left:5px;vertical-align:middle;opacity:0;transition:opacity .4s;font-weight:700;letter-spacing:.04em}
+.e2ee-badge.active{opacity:1}
+.header-actions{display:flex;gap:6px}
+.hdr-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--t2);cursor:pointer;transition:all .2s}
+.hdr-btn:active{background:rgba(108,99,255,.2);border-color:rgba(108,99,255,.4);transform:scale(.92)}
 
-  .typing-indicator { align-self: flex-start; background: var(--bg3); border: 1px solid rgba(255,255,255,.05); padding: 10px 16px; border-radius: 18px; border-bottom-left-radius: 5px; display: none; gap: 5px; align-items: center; }
-  .typing-indicator.show { display: flex; animation: msgIn .25s ease; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); animation: bounce 1.2s infinite; }
-  .dot:nth-child(2) { animation-delay: .2s; }
-  .dot:nth-child(3) { animation-delay: .4s; }
-  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+#chatBox{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 14px 8px;display:flex;flex-direction:column;gap:5px;-webkit-overflow-scrolling:touch}
+#chatBox::-webkit-scrollbar{width:2px}
+#chatBox::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:4px}
 
-  #toast { position: fixed; bottom: calc(80px + var(--safe)); left: 50%; transform: translateX(-50%) translateY(20px); background: var(--bg3); border: 1px solid rgba(255,255,255,.08); color: var(--text); font-size: 13px; padding: 10px 20px; border-radius: 24px; opacity: 0; transition: all .3s; z-index: 9999; white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,.4); pointer-events: none; }
-  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.msg{max-width:78%;padding:10px 14px;border-radius:18px;font-size:13.5px;line-height:1.6;word-break:break-word;position:relative;animation:msgPop .3s var(--spring) forwards}
+@keyframes msgPop{from{opacity:0;transform:translateY(10px) scale(.95)}to{opacity:1;transform:none}}
+.msg.sent{background:var(--g1);align-self:flex-end;border-bottom-right-radius:4px;color:#fff;box-shadow:0 4px 20px rgba(108,99,255,.28)}
+.msg.received{background:var(--bg3);align-self:flex-start;border-bottom-left-radius:4px;color:var(--t1);border:1px solid rgba(255,255,255,.05);box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.msg .ts{font-size:9.5px;opacity:.5;text-align:right;margin-top:4px;display:block;font-weight:500}
+.msg.system{align-self:center;background:rgba(108,99,255,.08);color:var(--t3);font-size:10.5px;padding:4px 13px;border-radius:100px;max-width:90%;text-align:center;border:1px solid rgba(108,99,255,.12);box-shadow:none}
+.date-sep{align-self:center;font-size:10px;color:var(--t3);background:var(--bg3);padding:3px 13px;border-radius:100px;margin:3px 0;font-weight:600;border:1px solid rgba(255,255,255,.05)}
+
+.chat-input-area{background:rgba(23,23,40,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);padding:9px 12px;padding-bottom:calc(9px + var(--safe));display:flex;align-items:flex-end;gap:9px;border-top:1px solid rgba(108,99,255,.1);flex-shrink:0;box-shadow:0 -4px 20px rgba(0,0,0,.2)}
+.input-box{flex:1;background:rgba(255,255,255,.05);border-radius:20px;border:1.5px solid rgba(255,255,255,.08);display:flex;align-items:flex-end;padding:9px 14px;transition:border-color .25s,background .25s,box-shadow .25s;gap:8px}
+.input-box:focus-within{border-color:rgba(108,99,255,.45);background:rgba(108,99,255,.06);box-shadow:0 0 0 3px rgba(108,99,255,.08)}
+#msgInput{flex:1;background:none;border:none;outline:none;color:var(--t1);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;resize:none;max-height:110px;line-height:1.55;overflow-y:auto;min-height:22px;font-weight:400}
+#msgInput::placeholder{color:var(--t3)}
+#sendBtn{width:44px;height:44px;border-radius:50%;border:none;background:var(--g1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 5px 20px rgba(108,99,255,.4);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+#sendBtn::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,.18),transparent);pointer-events:none}
+#sendBtn:active{transform:scale(.88);box-shadow:0 2px 8px rgba(108,99,255,.25)}
+
+/* ═══ CALL MODAL ═══ */
+#callModal{position:fixed;inset:0;background:rgba(10,10,22,.75);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);align-items:center;justify-content:center;z-index:1000;display:none;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.call-sheet{background:rgba(23,23,40,.98);backdrop-filter:blur(32px);border-radius:28px;padding:32px 28px 36px;width:90%;max-width:360px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;border:1px solid rgba(108,99,255,.18);box-shadow:0 24px 80px rgba(108,99,255,.2),inset 0 1px 0 rgba(255,255,255,.05);animation:popIn .35s var(--spring)}
+@keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:none}}
+.ring-avatar{width:88px;height:88px;border-radius:50%;background:var(--g1);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#fff;animation:ringPulse 1.6s infinite;box-shadow:0 8px 28px rgba(108,99,255,.3);margin-bottom:4px}
+@keyframes ringPulse{0%,100%{box-shadow:0 8px 28px rgba(108,99,255,.3),0 0 0 0 rgba(108,99,255,.3)}50%{box-shadow:0 8px 28px rgba(108,99,255,.3),0 0 0 22px rgba(108,99,255,0)}}
+.call-sheet h3{font-size:21px;font-weight:700;color:var(--t1)}
+.call-sheet .call-num{color:var(--t3);font-size:13px}
+.call-sheet .call-lbl{color:var(--t2);font-size:12.5px;font-weight:500}
+.modal-btns{display:flex;gap:44px;margin-top:14px}
+.modal-btns button{width:70px;height:70px;border-radius:50%;border:none;font-size:25px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .12s}
+.modal-btns button:active{transform:scale(.88)}
+#acceptBtn{background:linear-gradient(135deg,#10B981,#059669);box-shadow:0 8px 24px rgba(16,185,129,.4)}
+#declineBtn{background:linear-gradient(135deg,#EF4444,#DC2626);box-shadow:0 8px 24px rgba(239,68,68,.35)}
+.modal-btn-lbl{font-size:11px;color:var(--t3);margin-top:7px;font-weight:600;letter-spacing:.04em}
+
+/* ═══ CALL SCREEN ═══ */
+#callScreen{display:none;position:fixed;inset:0;background:#000;flex-direction:column;align-items:center;justify-content:center;z-index:999}
+#remoteVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#0a0a14}
+.call-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.6) 0%,transparent 25%,transparent 60%,rgba(0,0,0,.8) 100%);z-index:1}
+#localVideo{position:absolute;bottom:130px;right:16px;width:110px;height:150px;border-radius:18px;object-fit:cover;border:2px solid rgba(108,99,255,.4);z-index:2;background:#161628;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+#callStatus{position:absolute;top:calc(56px + env(safe-area-inset-top,0px));color:#fff;text-align:center;z-index:2;text-shadow:0 2px 14px rgba(0,0,0,.8);padding:0 24px;display:flex;flex-direction:column;align-items:center;gap:4px}
+#callStatus .call-peer-name{font-size:23px;font-weight:700}
+#callStatus .call-state{font-size:12.5px;color:rgba(255,255,255,.65);font-weight:500}
+.call-controls{position:absolute;bottom:calc(40px + var(--safe));display:flex;gap:16px;z-index:2;align-items:center}
+.ctrl-btn{width:56px;height:56px;border-radius:50%;border:none;font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .12s;backdrop-filter:blur(12px)}
+.ctrl-btn:active{transform:scale(.87)}
+#endBtn{width:66px;height:66px;font-size:23px;background:linear-gradient(135deg,#EF4444,#DC2626);color:#fff;box-shadow:0 8px 26px rgba(239,68,68,.5)}
+#muteBtn,#camBtn{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.16)}
+#muteBtn.muted,#camBtn.off{background:rgba(255,255,255,.32)}
+
+.typing-indicator{align-self:flex-start;background:var(--bg3);border:1px solid rgba(255,255,255,.05);padding:9px 14px;border-radius:18px;border-bottom-left-radius:4px;display:none;gap:5px;align-items:center;margin:0 14px 3px;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.typing-indicator.show{display:flex;animation:msgPop .25s var(--ease)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--p1);animation:bounce 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+#toast{position:fixed;bottom:calc(80px + var(--safe));left:50%;transform:translateX(-50%) translateY(14px);background:rgba(108,99,255,.18);backdrop-filter:blur(16px);border:1px solid rgba(108,99,255,.3);color:var(--t1);font-size:12.5px;padding:9px 20px;border-radius:100px;opacity:0;transition:all .35s var(--spring);z-index:9999;white-space:nowrap;box-shadow:0 8px 24px rgba(108,99,255,.2);pointer-events:none;font-weight:600}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
 <div class="screen" id="loginScreen">
-  <div class="login-bg"></div>
-  <div class="login-glow"></div>
-  <div class="login-logo">
-    <div class="icon">💬</div>
-    <h1>Pulse</h1>
-    <span>Chat & Call, Privately</span>
+  <div class="lbg">
+    <div class="lbg-grid"></div>
+    <div class="lbg-blob lb1"></div>
+    <div class="lbg-blob lb2"></div>
+    <div class="lbg-blob lb3"></div>
   </div>
   <div class="login-card">
-    <h2>Get Started</h2>
-    <p>Enter your phone number to continue</p>
-    <div class="inp-wrap">
-      <span class="flag">🇮🇳</span>
-      <span class="prefix">+91</span>
-      <input id="myIdInput" type="tel" placeholder="Your mobile number" maxlength="10" inputmode="numeric" pattern="[0-9]*">
+    <div class="login-hero">
+      <div class="logo-stack">
+        <div class="logo-ring1"></div>
+        <div class="logo-ring2"></div>
+        <div class="logo-box">
+          <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M37 7H7C5.9 7 5 7.9 5 9V31C5 32.1 5.9 33 7 33H14V40L23 33H37C38.1 33 39 32.1 39 31V9C39 7.9 38.1 7 37 7Z" fill="white" opacity="0.95"/>
+            <circle cx="15" cy="21" r="2.5" fill="rgba(108,99,255,0.7)"/>
+            <circle cx="22" cy="21" r="2.5" fill="rgba(108,99,255,0.7)"/>
+            <circle cx="29" cy="21" r="2.5" fill="rgba(108,99,255,0.7)"/>
+          </svg>
+        </div>
+      </div>
+      <div class="brand-name">Nexora <span>Chat</span></div>
+      <div class="brand-tag">Secure · Real-time · Private</div>
+      <div class="feature-chips">
+        <span class="chip">🔒 E2EE</span>
+        <span class="chip">📹 Video</span>
+        <span class="chip">⚡ Live</span>
+      </div>
     </div>
-    <div class="inp-wrap">
-      <span class="flag">📱</span>
-      <span class="prefix" style="left:48px;font-size:13px;color:var(--text3)">To:</span>
-      <input id="toIdInput" type="tel" placeholder="Friend's mobile number" maxlength="10" inputmode="numeric" pattern="[0-9]*" style="padding-left:68px">
+    <div class="login-form">
+      <div>
+        <div class="card-label">Welcome</div>
+        <div class="card-title">Get Started</div>
+        <div class="card-sub">Enter your phone numbers to connect</div>
+      </div>
+      <div class="inp-wrap">
+        <span class="inp-ico">🇮🇳</span>
+        <span class="inp-pre">+91</span>
+        <input id="myIdInput" type="tel" placeholder="Your mobile number" maxlength="10" inputmode="numeric" pattern="[0-9]*">
+      </div>
+      <div class="inp-wrap">
+        <span class="inp-ico">📱</span>
+        <span class="inp-pre" style="left:44px;font-size:12px">To:</span>
+        <input id="toIdInput" type="tel" placeholder="Friend's number" maxlength="10" inputmode="numeric" pattern="[0-9]*" style="padding-left:66px">
+      </div>
+      <button class="login-btn" id="startBtn">Continue →</button>
+      <span id="loginError">Please enter valid 10-digit numbers</span>
+      <div class="trust-row">
+        <div class="trust-dot"></div>
+        <span>End-to-end encrypted by default</span>
+      </div>
     </div>
-    <button class="login-btn" id="startBtn">Continue →</button>
-    <span id="loginError">Please enter valid 10-digit numbers</span>
   </div>
 </div>
 
-<!-- CHAT SCREEN -->
+<!-- CHAT — full screen always -->
 <div class="screen hidden" id="chatScreen">
   <div class="chat-header">
     <div class="peer-info">
@@ -175,7 +294,7 @@
       <textarea id="msgInput" placeholder="Message…" rows="1"></textarea>
     </div>
     <button id="sendBtn">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
     </button>
   </div>
 </div>
@@ -210,9 +329,9 @@
     <div class="call-state">Connecting…</div>
   </div>
   <div class="call-controls">
-    <button class="ctrl-btn" id="muteBtn" title="Mute">🎤</button>
-    <button class="ctrl-btn" id="endBtn" title="End">📵</button>
-    <button class="ctrl-btn" id="camBtn" title="Camera">📷</button>
+    <button class="ctrl-btn" id="muteBtn">🎤</button>
+    <button class="ctrl-btn" id="endBtn">📵</button>
+    <button class="ctrl-btn" id="camBtn">📷</button>
   </div>
 </div>
 
@@ -221,447 +340,57 @@
 <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
 <script>
 'use strict';
-
-// ===== CONFIG — sab kuch yahan se control hoga =====
-const API_BASE = 'https://api.nexorachat.online';
-const WS_URL   = API_BASE + '/chat';
-
-const ICE_CONFIG = {
-  iceServers: [
-    { urls: "stun:stun.l.google.com:19302" },
-    { urls: "stun:stun1.l.google.com:19302" },
-    {
-      urls: ["turn:openrelay.metered.ca:80","turn:openrelay.metered.ca:443","turn:openrelay.metered.ca:443?transport=tcp"],
-      username: "openrelayproject",
-      credential: "openrelayproject"
-    }
-  ]
-};
-
-const $ = id => document.getElementById(id);
-
-let stompClient = null;
-let myId = '', receiver = '';
-let myNum = '', peerNum = '';
-let pc = null;
-let localStream = null;
-let pendingICE = [];
-let isMuted = false, isCamOff = false;
-
-// ===== E2EE STATE =====
-const e2ee = {
-  myKeyPair: null,
-  sharedAESKey: null,
-  myPublicKeyB64: null,
-  ready: false
-};
-
-// ===== E2EE HELPERS =====
-function ab2b64(buf) {
-  return btoa(String.fromCharCode(...new Uint8Array(buf)));
-}
-function b642ab(b64) {
-  const bin = atob(b64);
-  const buf = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
-  return buf.buffer;
-}
-async function generateKeyPair() {
-  e2ee.myKeyPair = await crypto.subtle.generateKey(
-    { name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveKey']
-  );
-  const pubRaw = await crypto.subtle.exportKey('raw', e2ee.myKeyPair.publicKey);
-  e2ee.myPublicKeyB64 = ab2b64(pubRaw);
-}
-async function deriveSharedKey(peerPubB64) {
-  const peerPubRaw = b642ab(peerPubB64);
-  const peerPublicKey = await crypto.subtle.importKey(
-    'raw', peerPubRaw, { name: 'ECDH', namedCurve: 'P-256' }, false, []
-  );
-  e2ee.sharedAESKey = await crypto.subtle.deriveKey(
-    { name: 'ECDH', public: peerPublicKey },
-    e2ee.myKeyPair.privateKey,
-    { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
-  );
-  e2ee.ready = true;
-  $('e2eeBadge').classList.add('active');
-  addMsg('system', '🔒 End-to-end encrypted. Messages are secure.');
-}
-async function encryptMsg(plaintext) {
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const encoded = new TextEncoder().encode(plaintext);
-  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, e2ee.sharedAESKey, encoded);
-  return JSON.stringify({ iv: ab2b64(iv.buffer), ct: ab2b64(ct) });
-}
-async function decryptMsg(payload) {
-  try {
-    const { iv, ct } = JSON.parse(payload);
-    const decrypted = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: b642ab(iv) }, e2ee.sharedAESKey, b642ab(ct)
-    );
-    return new TextDecoder().decode(decrypted);
-  } catch(e) {
-    return '[🔒 Could not decrypt message]';
-  }
-}
-
-// ===== LAST SEEN API =====
-async function fetchLastSeen(userId) {
-  try {
-    const res = await fetch(`${API_BASE}/api/last-seen/${userId}`);
-    if (!res.ok) return 'Offline';
-    const txt = await res.text();
-    return txt || 'Offline';
-  } catch(e) {
-    return 'Offline';
-  }
-}
-
-// ===== HELPERS =====
-function formatNum(n) { return '+91 ' + n.slice(0,5) + ' ' + n.slice(5); }
-function initials(n) { return n.slice(0,1).toUpperCase(); }
-function nowTime() {
-  return new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-}
-function toast(msg) {
-  const t = $('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2600);
-}
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-}
-
-// ===== STATUS =====
-function setStatus(online, lastSeenText) {
-  const dot = $('statusDot');
-  const txt = $('peerStatus');
-  if (online) {
-    dot.classList.add('online');
-    txt.textContent = 'online';
-    txt.classList.add('online');
-  } else {
-    dot.classList.remove('online');
-    txt.textContent = lastSeenText || 'offline';
-    txt.classList.remove('online');
-  }
-}
-
-// ===== LOGIN =====
-$('startBtn').addEventListener('click', startChat);
-['myIdInput','toIdInput'].forEach(id => {
-  $(id).addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g,''); });
-  $(id).addEventListener('keydown', e => { if(e.key==='Enter') startChat(); });
-});
-
-async function startChat() {
-  myNum = $('myIdInput').value.trim();
-  peerNum = $('toIdInput').value.trim();
-  if (myNum.length !== 10 || peerNum.length !== 10) {
-    $('loginError').style.display = 'block';
-    return;
-  }
-  myId = myNum;
-  receiver = peerNum;
-
-  await generateKeyPair();
-
-  $('loginScreen').classList.add('hidden');
-  $('chatScreen').classList.remove('hidden');
-
-  $('peerAvatar').textContent = initials(peerNum);
-  $('peerName').textContent = formatNum(peerNum);
-  $('callPeerName').textContent = formatNum(peerNum);
-  $('callerAvatar').textContent = initials(peerNum);
-  $('callerName').textContent = formatNum(peerNum);
-  $('callerNum').textContent = formatNum(peerNum);
-
-  // Immediately show last seen before WS connects
-  const ls = await fetchLastSeen(peerNum);
-  setStatus(false, ls);
-
-  connect();
-}
-
-// ===== SOCKET =====
-function connect() {
-  try {
-    const wsEndpoint = WS_URL + '?userId=' + myId;
-    const socket = new WebSocket(wsEndpoint);
-    stompClient = Stomp.over(socket);
-    stompClient.debug = null;
-    stompClient.heartbeat = { outgoing: 20000, incoming: 20000 };
-    stompClient.connect({}, frame => {
-      stompClient.subscribe('/user/queue/messages', msg => {
-        route(JSON.parse(msg.body));
-      });
-      // Announce online + share ECDH public key
-      signal('ONLINE', { num: myNum, pubKey: e2ee.myPublicKeyB64 });
-    }, err => {
-      toast('Connection failed. Retrying…');
-      setTimeout(connect, 3000);
-    });
-    // Handle unexpected socket close
-    socket.onclose = () => {
-      toast('Disconnected. Reconnecting…');
-      setTimeout(connect, 3000);
-    };
-  } catch(e) {
-    console.error(e);
-    setTimeout(connect, 3000);
-  }
-}
-
-// ===== SIGNAL =====
-function signal(type, data) {
-  try {
-    stompClient.send('/app/private-chat', {}, JSON.stringify({
-      sender: myId, receiver, type,
-      data: data || {}
-    }));
-  } catch(e) {}
-}
-
-// ===== ROUTER =====
-async function route(d) {
-  switch(d.type) {
-
-    case 'ONLINE':
-      setStatus(true);
-      if (d.data && d.data.pubKey) {
-        await deriveSharedKey(d.data.pubKey);
-      }
-      signal('ONLINE_ACK', { pubKey: e2ee.myPublicKeyB64 });
-      addMsg('system', `${formatNum(peerNum)} joined`);
-      break;
-
-    case 'ONLINE_ACK':
-      setStatus(true);
-      if (!e2ee.ready && d.data && d.data.pubKey) {
-        await deriveSharedKey(d.data.pubKey);
-      }
-      break;
-
-    case 'OFFLINE':
-      // Fetch last seen from REST API when peer disconnects
-      const ls = await fetchLastSeen(peerNum);
-      setStatus(false, ls);
-      e2ee.ready = false;
-      e2ee.sharedAESKey = null;
-      $('e2eeBadge').classList.remove('active');
-      break;
-
-    case 'CHAT':
-      if (e2ee.ready && d.data.enc) {
-        const plain = await decryptMsg(d.data.enc);
-        addMsg('received', plain);
-      } else if (d.data.text) {
-        addMsg('received', d.data.text);
-      }
-      break;
-
-    case 'TYPING':      showTyping(true);  break;
-    case 'STOP_TYPING': showTyping(false); break;
-    case 'CALL_REQUEST': showIncomingCall(); break;
-    case 'CALL_ACCEPT':  startCaller(); break;
-    case 'OFFER':        startCallee(d.data); break;
-    case 'ANSWER':       gotAnswer(d.data); break;
-    case 'ICE':          gotICE(d.data); break;
-    case 'END_CALL':
-      cleanup();
-      toast('Call ended');
-      break;
-  }
-}
-
-// ===== CHAT =====
-function addMsg(type, text) {
-  const box = $('chatBox');
-  const div = document.createElement('div');
-  div.className = 'msg ' + type;
-  if (type !== 'system') {
-    div.innerHTML = `<span>${escapeHtml(text)}</span><span class="ts">${nowTime()}</span>`;
-  } else {
-    div.textContent = text;
-  }
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-}
-function escapeHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-$('sendBtn').addEventListener('click', sendMsg);
-$('msgInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
-});
-$('msgInput').addEventListener('input', function() {
-  autoResize(this);
-  signalTyping();
-});
-
+const API_BASE='https://api.nexorachat.online';
+const WS_URL=API_BASE+'/chat';
+const ICE_CONFIG={iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:"stun:stun1.l.google.com:19302"},{urls:["turn:openrelay.metered.ca:80","turn:openrelay.metered.ca:443","turn:openrelay.metered.ca:443?transport=tcp"],username:"openrelayproject",credential:"openrelayproject"}]};
+const $=id=>document.getElementById(id);
+let stompClient=null,myId='',receiver='',myNum='',peerNum='',pc=null,localStream=null,pendingICE=[],isMuted=false,isCamOff=false;
+const e2ee={myKeyPair:null,sharedAESKey:null,myPublicKeyB64:null,ready:false};
+function ab2b64(buf){return btoa(String.fromCharCode(...new Uint8Array(buf)))}
+function b642ab(b64){const bin=atob(b64);const buf=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)buf[i]=bin.charCodeAt(i);return buf.buffer}
+async function generateKeyPair(){e2ee.myKeyPair=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveKey']);const pubRaw=await crypto.subtle.exportKey('raw',e2ee.myKeyPair.publicKey);e2ee.myPublicKeyB64=ab2b64(pubRaw)}
+async function deriveSharedKey(peerPubB64){const peerPubRaw=b642ab(peerPubB64);const peerPublicKey=await crypto.subtle.importKey('raw',peerPubRaw,{name:'ECDH',namedCurve:'P-256'},false,[]);e2ee.sharedAESKey=await crypto.subtle.deriveKey({name:'ECDH',public:peerPublicKey},e2ee.myKeyPair.privateKey,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);e2ee.ready=true;$('e2eeBadge').classList.add('active');addMsg('system','🔒 End-to-end encrypted. Messages are secure.')}
+async function encryptMsg(plaintext){const iv=crypto.getRandomValues(new Uint8Array(12));const encoded=new TextEncoder().encode(plaintext);const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},e2ee.sharedAESKey,encoded);return JSON.stringify({iv:ab2b64(iv.buffer),ct:ab2b64(ct)})}
+async function decryptMsg(payload){try{const{iv,ct}=JSON.parse(payload);const decrypted=await crypto.subtle.decrypt({name:'AES-GCM',iv:b642ab(iv)},e2ee.sharedAESKey,b642ab(ct));return new TextDecoder().decode(decrypted)}catch(e){return'[🔒 Could not decrypt message]'}}
+async function fetchLastSeen(userId){try{const res=await fetch(`${API_BASE}/api/last-seen/${userId}`);if(!res.ok)return'Offline';const txt=await res.text();return txt||'Offline'}catch(e){return'Offline'}}
+function formatNum(n){return'+91 '+n.slice(0,5)+' '+n.slice(5)}
+function initials(n){return n.slice(0,1).toUpperCase()}
+function nowTime(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,110)+'px'}
+function setStatus(online,lastSeenText){const dot=$('statusDot'),txt=$('peerStatus');if(online){dot.classList.add('online');txt.textContent='online';txt.classList.add('online')}else{dot.classList.remove('online');txt.textContent=lastSeenText||'offline';txt.classList.remove('online')}}
+$('startBtn').addEventListener('click',startChat);
+['myIdInput','toIdInput'].forEach(id=>{$(id).addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'')});$(id).addEventListener('keydown',e=>{if(e.key==='Enter')startChat()})});
+async function startChat(){myNum=$('myIdInput').value.trim();peerNum=$('toIdInput').value.trim();if(myNum.length!==10||peerNum.length!==10){$('loginError').style.display='block';return}myId=myNum;receiver=peerNum;await generateKeyPair();$('loginScreen').classList.add('hidden');$('chatScreen').classList.remove('hidden');$('peerAvatar').textContent=initials(peerNum);$('peerName').textContent=formatNum(peerNum);$('callPeerName').textContent=formatNum(peerNum);$('callerAvatar').textContent=initials(peerNum);$('callerName').textContent=formatNum(peerNum);$('callerNum').textContent=formatNum(peerNum);const ls=await fetchLastSeen(peerNum);setStatus(false,ls);connect()}
+function connect(){try{const socket=new WebSocket(WS_URL+'?userId='+myId);stompClient=Stomp.over(socket);stompClient.debug=null;stompClient.heartbeat={outgoing:20000,incoming:20000};stompClient.connect({},frame=>{stompClient.subscribe('/user/queue/messages',msg=>{route(JSON.parse(msg.body))});signal('ONLINE',{num:myNum,pubKey:e2ee.myPublicKeyB64})},err=>{toast('Connection failed. Retrying…');setTimeout(connect,3000)});socket.onclose=()=>{toast('Disconnected. Reconnecting…');setTimeout(connect,3000)}}catch(e){console.error(e);setTimeout(connect,3000)}}
+function signal(type,data){try{stompClient.send('/app/private-chat',{},JSON.stringify({sender:myId,receiver,type,data:data||{}}))}catch(e){}}
+async function route(d){switch(d.type){case'ONLINE':setStatus(true);if(d.data&&d.data.pubKey)await deriveSharedKey(d.data.pubKey);signal('ONLINE_ACK',{pubKey:e2ee.myPublicKeyB64});addMsg('system',`${formatNum(peerNum)} joined`);break;case'ONLINE_ACK':setStatus(true);if(!e2ee.ready&&d.data&&d.data.pubKey)await deriveSharedKey(d.data.pubKey);break;case'OFFLINE':const ls=await fetchLastSeen(peerNum);setStatus(false,ls);e2ee.ready=false;e2ee.sharedAESKey=null;$('e2eeBadge').classList.remove('active');break;case'CHAT':if(e2ee.ready&&d.data.enc){const plain=await decryptMsg(d.data.enc);addMsg('received',plain)}else if(d.data.text)addMsg('received',d.data.text);break;case'TYPING':showTyping(true);break;case'STOP_TYPING':showTyping(false);break;case'CALL_REQUEST':showIncomingCall();break;case'CALL_ACCEPT':startCaller();break;case'OFFER':startCallee(d.data);break;case'ANSWER':gotAnswer(d.data);break;case'ICE':gotICE(d.data);break;case'END_CALL':cleanup();toast('Call ended');break}}
+function addMsg(type,text){const box=$('chatBox');const div=document.createElement('div');div.className='msg '+type;if(type!=='system'){div.innerHTML=`<span>${escapeHtml(text)}</span><span class="ts">${nowTime()}</span>`}else{div.textContent=text}box.appendChild(div);box.scrollTop=box.scrollHeight}
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+$('sendBtn').addEventListener('click',sendMsg);
+$('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}});
+$('msgInput').addEventListener('input',function(){autoResize(this);signalTyping()});
 let typingTimer;
-function signalTyping() {
-  signal('TYPING', {});
-  clearTimeout(typingTimer);
-  typingTimer = setTimeout(() => signal('STOP_TYPING', {}), 1500);
-}
-function showTyping(show) {
-  $('typingInd').className = 'typing-indicator' + (show ? ' show' : '');
-  if (show) $('chatBox').scrollTop = $('chatBox').scrollHeight;
-}
-
-async function sendMsg() {
-  const inp = $('msgInput');
-  const text = inp.value.trim();
-  if (!text) return;
-  if (e2ee.ready) {
-    const enc = await encryptMsg(text);
-    signal('CHAT', { enc });
-  } else {
-    signal('CHAT', { text });
-  }
-  addMsg('sent', text);
-  inp.value = '';
-  inp.style.height = 'auto';
-  signal('STOP_TYPING', {});
-}
-
-// ===== CALL =====
-$('callBtn').onclick = () => {
-  signal('CALL_REQUEST', {});
-  openCallScreen();
-  toast('Calling…');
-};
-$('audioCallBtn').onclick = () => {
-  signal('CALL_REQUEST', {});
-  openCallScreen();
-  toast('Audio calling…');
-};
-
-function showIncomingCall() {
-  $('callModal').style.display = 'flex';
-}
-
-$('acceptBtn').onclick = async () => {
-  $('callModal').style.display = 'none';
-  signal('CALL_ACCEPT', {});
-  openCallScreen();
-  localStream = await getMedia();
-};
-
-$('declineBtn').onclick = () => {
-  $('callModal').style.display = 'none';
-  signal('END_CALL', {});
-};
-
-async function startCaller() {
-  localStream = await getMedia();
-  pc = createPeer();
-  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
-  const offer = await pc.createOffer();
-  await pc.setLocalDescription(offer);
-  signal('OFFER', pc.localDescription);
-}
-
-async function startCallee(offer) {
-  if (!localStream) localStream = await getMedia();
-  pc = createPeer();
-  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
-  await pc.setRemoteDescription(new RTCSessionDescription(offer));
-  pendingICE.forEach(c => pc.addIceCandidate(new RTCIceCandidate(c)));
-  pendingICE = [];
-  const answer = await pc.createAnswer();
-  await pc.setLocalDescription(answer);
-  signal('ANSWER', pc.localDescription);
-}
-
-async function gotAnswer(ans) {
-  await pc.setRemoteDescription(new RTCSessionDescription(ans));
-  pendingICE.forEach(c => pc.addIceCandidate(new RTCIceCandidate(c)));
-  pendingICE = [];
-}
-
-async function gotICE(c) {
-  try {
-    if (pc && pc.remoteDescription) await pc.addIceCandidate(new RTCIceCandidate(c));
-    else pendingICE.push(c);
-  } catch(e) {}
-}
-
-function createPeer() {
-  const conn = new RTCPeerConnection(ICE_CONFIG);
-  const remoteStream = new MediaStream();
-  const video = $('remoteVideo');
-  video.srcObject = remoteStream;
-  conn.ontrack = e => {
-    if (!remoteStream.getTracks().find(t => t.id === e.track.id)) {
-      remoteStream.addTrack(e.track);
-    }
-    video.muted = false; video.volume = 1;
-    video.play().catch(()=>{});
-    $('callScreen').querySelector('.call-state').textContent = '🟢 Connected';
-  };
-  conn.onicecandidate = e => { if(e.candidate) signal('ICE', e.candidate); };
-  conn.oniceconnectionstatechange = () => {
-    if (conn.iceConnectionState === 'failed') conn.restartIce();
-    if (conn.iceConnectionState === 'disconnected') {
-      $('callScreen').querySelector('.call-state').textContent = 'Reconnecting…';
-    }
-  };
-  return conn;
-}
-
-async function getMedia() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    stream.getAudioTracks().forEach(t => t.enabled = true);
-    $('localVideo').srcObject = stream;
-    return stream;
-  } catch(e) {
-    toast('Camera/Mic blocked');
-    return null;
-  }
-}
-
-function openCallScreen() {
-  $('callScreen').style.display = 'flex';
-  $('remoteVideo').muted = false;
-}
-
-$('muteBtn').onclick = () => {
-  if (!localStream) return;
-  isMuted = !isMuted;
-  localStream.getAudioTracks().forEach(t => t.enabled = !isMuted);
-  $('muteBtn').textContent = isMuted ? '🔇' : '🎤';
-  $('muteBtn').classList.toggle('muted', isMuted);
-};
-$('camBtn').onclick = () => {
-  if (!localStream) return;
-  isCamOff = !isCamOff;
-  localStream.getVideoTracks().forEach(t => t.enabled = !isCamOff);
-  $('camBtn').textContent = isCamOff ? '🚫' : '📷';
-  $('camBtn').classList.toggle('off', isCamOff);
-};
-$('endBtn').onclick = () => { signal('END_CALL', {}); cleanup(); };
-
-function cleanup() {
-  if (pc) { pc.close(); pc = null; }
-  if (localStream) { localStream.getTracks().forEach(t=>t.stop()); localStream = null; }
-  $('callScreen').style.display = 'none';
-  $('callModal').style.display = 'none';
-  $('remoteVideo').srcObject = null;
-  $('localVideo').srcObject = null;
-  isMuted = false; isCamOff = false;
-  $('muteBtn').textContent = '🎤'; $('camBtn').textContent = '📷';
-  $('callScreen').querySelector('.call-state').textContent = 'Connecting…';
-}
-
-window.addEventListener('beforeunload', () => {
-  try { signal('OFFLINE', {}); } catch(e){}
-});
+function signalTyping(){signal('TYPING',{});clearTimeout(typingTimer);typingTimer=setTimeout(()=>signal('STOP_TYPING',{}),1500)}
+function showTyping(show){$('typingInd').className='typing-indicator'+(show?' show':'');if(show)$('chatBox').scrollTop=$('chatBox').scrollHeight}
+async function sendMsg(){const inp=$('msgInput');const text=inp.value.trim();if(!text)return;if(e2ee.ready){const enc=await encryptMsg(text);signal('CHAT',{enc})}else{signal('CHAT',{text})}addMsg('sent',text);inp.value='';inp.style.height='auto';signal('STOP_TYPING',{})}
+$('callBtn').onclick=()=>{signal('CALL_REQUEST',{});openCallScreen();toast('Calling…')};
+$('audioCallBtn').onclick=()=>{signal('CALL_REQUEST',{});openCallScreen();toast('Audio calling…')};
+function showIncomingCall(){$('callModal').style.display='flex'}
+$('acceptBtn').onclick=async()=>{$('callModal').style.display='none';signal('CALL_ACCEPT',{});openCallScreen();localStream=await getMedia()};
+$('declineBtn').onclick=()=>{$('callModal').style.display='none';signal('END_CALL',{})};
+async function startCaller(){localStream=await getMedia();pc=createPeer();localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));const offer=await pc.createOffer();await pc.setLocalDescription(offer);signal('OFFER',pc.localDescription)}
+async function startCallee(offer){if(!localStream)localStream=await getMedia();pc=createPeer();localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));await pc.setRemoteDescription(new RTCSessionDescription(offer));pendingICE.forEach(c=>pc.addIceCandidate(new RTCIceCandidate(c)));pendingICE=[];const answer=await pc.createAnswer();await pc.setLocalDescription(answer);signal('ANSWER',pc.localDescription)}
+async function gotAnswer(ans){await pc.setRemoteDescription(new RTCSessionDescription(ans));pendingICE.forEach(c=>pc.addIceCandidate(new RTCIceCandidate(c)));pendingICE=[]}
+async function gotICE(c){try{if(pc&&pc.remoteDescription)await pc.addIceCandidate(new RTCIceCandidate(c));else pendingICE.push(c)}catch(e){}}
+function createPeer(){const conn=new RTCPeerConnection(ICE_CONFIG);const remoteStream=new MediaStream();const video=$('remoteVideo');video.srcObject=remoteStream;conn.ontrack=e=>{if(!remoteStream.getTracks().find(t=>t.id===e.track.id))remoteStream.addTrack(e.track);video.muted=false;video.volume=1;video.play().catch(()=>{});$('callScreen').querySelector('.call-state').textContent='🟢 Connected'};conn.onicecandidate=e=>{if(e.candidate)signal('ICE',e.candidate)};conn.oniceconnectionstatechange=()=>{if(conn.iceConnectionState==='failed')conn.restartIce();if(conn.iceConnectionState==='disconnected')$('callScreen').querySelector('.call-state').textContent='Reconnecting…'};return conn}
+async function getMedia(){try{const stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});stream.getAudioTracks().forEach(t=>t.enabled=true);$('localVideo').srcObject=stream;return stream}catch(e){toast('Camera/Mic blocked');return null}}
+function openCallScreen(){$('callScreen').style.display='flex';$('remoteVideo').muted=false}
+$('muteBtn').onclick=()=>{if(!localStream)return;isMuted=!isMuted;localStream.getAudioTracks().forEach(t=>t.enabled=!isMuted);$('muteBtn').textContent=isMuted?'🔇':'🎤';$('muteBtn').classList.toggle('muted',isMuted)};
+$('camBtn').onclick=()=>{if(!localStream)return;isCamOff=!isCamOff;localStream.getVideoTracks().forEach(t=>t.enabled=!isCamOff);$('camBtn').textContent=isCamOff?'🚫':'📷';$('camBtn').classList.toggle('off',isCamOff)};
+$('endBtn').onclick=()=>{signal('END_CALL',{});cleanup()};
+function cleanup(){if(pc){pc.close();pc=null}if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}$('callScreen').style.display='none';$('callModal').style.display='none';$('remoteVideo').srcObject=null;$('localVideo').srcObject=null;isMuted=false;isCamOff=false;$('muteBtn').textContent='🎤';$('camBtn').textContent='📷';$('callScreen').querySelector('.call-state').textContent='Connecting…'}
+window.addEventListener('beforeunload',()=>{try{signal('OFFLINE',{})}catch(e){}});
 </script>
 </body>
 </html>
