@@ -123,7 +123,7 @@ export function PricingPage() {
 
 export function PrivacyPage() {
   return (
-    <PageLayout title="Privacy Policy" updated="[FILL IN date]">
+    <PageLayout title="Privacy Policy" updated="28 August 2026">
       <p>
         This Privacy Policy explains how Nexora Chat ("we", "our", "us") collects, uses, and protects
         information when you use our messaging and video calling service (the "Service").
@@ -144,22 +144,40 @@ export function PrivacyPage() {
         <li>To operate and maintain the Service (connecting chats and calls)</li>
         <li>To show accurate online/offline and last-seen status</li>
         <li>To improve reliability and troubleshoot technical issues</li>
+        <li>To process payments for paid features through our payment service provider</li>
+        <li>To protect the Service against fraud, abuse, unauthorized access, and other security threats</li>
       </ul>
       <h3>4. Third-party services</h3>
       <p>
         We use third-party infrastructure for functions such as real-time messaging relay, STUN/TURN servers
-        for video calls, and payment processing (for any paid features). [FILL IN: name your actual
-        sub-processors, e.g. your hosting provider and Cashfree for payments.]
+        for video calls, hosting and infrastructure, and payment processing for paid features. These third-party
+        service providers may process limited information as necessary to provide their services and are expected
+        to maintain appropriate security and privacy protections. Payment processing may be handled by Cashfree
+        Payments, subject to Cashfree's applicable terms and privacy policy.
       </p>
       <h3>5. Data retention</h3>
-      <p>[FILL IN: how long you keep phone numbers/presence logs, and how users can request deletion.]</p>
+      <p>
+        We retain personal information only for as long as necessary to operate the Service, maintain account
+        security, comply with applicable legal obligations, resolve disputes, and enforce our agreements.
+        Users may request deletion of their personal data and account by contacting us through our contact page.
+        Where deletion is legally or technically restricted, we will retain only the information that is required
+        for the applicable purpose.
+      </p>
       <h3>6. Your rights</h3>
       <p>
         You may request access to, correction of, or deletion of your personal data by contacting us at{' '}
         <a href="#/contact">our contact page</a>.
       </p>
       <h3>7. Contact</h3>
-      <p>For any privacy questions, reach us at [FILL IN support email].</p>
+      <p>
+        For any privacy questions, data-related requests, or concerns, please contact us through the following
+        details:
+      </p>
+      <ul>
+        <li><strong>Legal Name:</strong> Vijay Prajapati</li>
+        <li><strong>Email:</strong> vijayprajapati24646@gmail.com</li>
+        <li><strong>Mobile:</strong> 9205483945</li>
+      </ul>
     </PageLayout>
   )
 }
