@@ -73,14 +73,14 @@ export function AboutPage() {
       </p>
       <h3>Who we are</h3>
       <p>
-        [FILL IN: 2–3 lines about your company — e.g. "Nexora Technologies is a [Private Limited /
-        Proprietorship / LLP] registered in [City, State, India], founded in [year], focused on building
-        privacy-first communication tools."]
+        Nexora Chat is a software product operated by Vijay Prajapati, focused on building secure,
+        privacy-first communication and software solutions for individual and business users.
       </p>
       <p>
-        Registered business name: <b>[FILL IN legal entity name]</b><br />
-        CIN / GST / registration number (if applicable): <b>[FILL IN]</b><br />
-        Registered address: <b>C Block, Govindpuram, Ghaziabad, Uttar Pradesh - 20105</b>
+        Legal name: <b>Vijay Prajapati</b><br />
+        Registered address: <b>C Block, Govindpuram, Ghaziabad, Uttar Pradesh - 20105</b><br />
+        Email: <b>vijayprajapati24646@gmail.com</b><br />
+        Phone: <b>9205483945</b>
       </p>
     </PageLayout>
   )
@@ -91,7 +91,7 @@ export function PricingPage() {
     <PageLayout title="Pricing">
       <p>
         Nexora Chat is free to use for one-to-one messaging and calling. A Pro plan is available for anyone
-        who wants extra benefits, billed monthly.
+        who wants additional benefits, billed monthly.
       </p>
       <div className="policy-pricing-grid">
         <div className="policy-plan">
@@ -107,15 +107,17 @@ export function PricingPage() {
           <h4>Pro</h4>
           <div className="policy-price">₹49 / month</div>
           <ul>
-            <li>[FILL IN benefit]</li>
-            <li>[FILL IN benefit]</li>
+            <li>Access to available Pro features</li>
+            <li>Additional benefits provided with the Pro plan</li>
             <li>Priority support</li>
           </ul>
         </div>
       </div>
       <p>
-        All payments are processed securely via our payment partner. Prices are listed in INR and are
-        inclusive of applicable taxes unless stated otherwise at checkout.
+        All payments are processed securely through our payment partner. Prices are listed in INR and are
+        inclusive of applicable taxes unless stated otherwise at checkout. Any applicable subscription,
+        cancellation, and refund terms are described in our <a href="#/refund">Refund & Cancellation Policy</a>
+        and <a href="#/terms">Terms & Conditions</a>.
       </p>
     </PageLayout>
   )
@@ -184,10 +186,10 @@ export function PrivacyPage() {
 
 export function TermsPage() {
   return (
-    <PageLayout title="Terms & Conditions" updated="[FILL IN date]">
+    <PageLayout title="Terms & Conditions" updated="28 August 2026">
       <p>
         These Terms & Conditions ("Terms") govern your use of Nexora Chat (the "Service"), operated by
-        [FILL IN legal entity name] ("we", "us"). By using the Service, you agree to these Terms.
+        Vijay Prajapati ("we", "us"). By using the Service, you agree to these Terms.
       </p>
       <h3>1. Eligibility</h3>
       <p>You must be at least 18 years old, or the age of legal majority in your jurisdiction, to use the Service.</p>
@@ -199,8 +201,10 @@ export function TermsPage() {
       </ul>
       <h3>3. Paid features</h3>
       <p>
-        [FILL IN: describe any paid plans/features, billing cycle, auto-renewal terms, and how payments are
-        processed via your payment gateway partner.]
+        Certain features may be offered as paid plans or subscriptions. Current prices and available features
+        are shown on the Pricing page or at checkout. Payments may be processed through Cashfree Payments or
+        another authorized payment service provider. By purchasing a paid feature, you agree to the applicable
+        price, billing period, and payment terms presented at checkout.
       </p>
       <h3>4. Availability</h3>
       <p>
@@ -209,7 +213,7 @@ export function TermsPage() {
       </p>
       <h3>5. Limitation of liability</h3>
       <p>
-        To the maximum extent permitted by law, [FILL IN legal entity name] shall not be liable for indirect,
+        To the maximum extent permitted by law, Vijay Prajapati shall not be liable for indirect,
         incidental, or consequential damages arising from your use of the Service.
       </p>
       <h3>6. Termination</h3>
@@ -217,35 +221,43 @@ export function TermsPage() {
       <h3>7. Changes to these Terms</h3>
       <p>We may update these Terms from time to time. Continued use of the Service means you accept the updated Terms.</p>
       <h3>8. Governing law</h3>
-      <p>These Terms are governed by the laws of India. [FILL IN jurisdiction/courts for disputes.]</p>
+      <p>
+        These Terms are governed by the laws of India. Any dispute will be subject to the jurisdiction of
+        the courts having appropriate jurisdiction in Uttar Pradesh, India.
+      </p>
       <h3>9. Contact</h3>
-      <p>Questions about these Terms can be sent to [FILL IN support email].</p>
+      <p>
+        Questions about these Terms can be sent to <a href="mailto:vijayprajapati24646@gmail.com">vijayprajapati24646@gmail.com</a>.
+      </p>
     </PageLayout>
   )
 }
 
 export function RefundPage() {
   return (
-    <PageLayout title="Refund & Cancellation Policy" updated="[FILL IN date]">
+    <PageLayout title="Refund & Cancellation Policy" updated="28 August 2026">
       <p>
         This Refund & Cancellation Policy applies to any paid plans or features purchased through Nexora
-        Chat. [FILL IN: if the Service is currently free, state that clearly here — payment gateways still
-        expect this page to exist and describe what will apply once paid features launch.]
+        Chat. Free features do not require payment. For paid subscriptions, the applicable price and billing
+        period are shown before payment is completed.
       </p>
       <h3>1. Cancellations</h3>
       <p>
-        [FILL IN: e.g. "You may cancel your subscription at any time from Settings. Cancellation takes
-        effect at the end of the current billing cycle; you will retain access until then."]
+        You may request cancellation of a paid subscription at any time by contacting us through the Contact
+        Us page. Cancellation requests will apply to the applicable subscription period and will not create a
+        new charge for the following billing period where cancellation is successfully processed.
       </p>
       <h3>2. Refunds</h3>
       <p>
-        [FILL IN: e.g. "Refund requests made within [X] days of a charge, where the paid feature was not
-        used, are eligible for a full refund. Requests after [X] days are evaluated case by case."]
+        Refund requests may be considered for duplicate charges, failed transactions that were nevertheless
+        debited, or other valid billing issues. Refund eligibility for a paid feature may depend on the
+        circumstances and the extent to which the paid service has been used.
       </p>
       <h3>3. How to request a refund or cancellation</h3>
       <p>
-        Email us at [FILL IN support email] with your registered phone number and the transaction ID from
-        your payment confirmation. We aim to respond within [FILL IN e.g. 3–5 business days].
+        Email us at <a href="mailto:vijayprajapati24646@gmail.com">vijayprajapati24646@gmail.com</a> with your
+        registered phone number and the transaction ID from your payment confirmation. We aim to respond to
+        requests within 3–5 business days.
       </p>
       <h3>4. Failed or duplicate payments</h3>
       <p>
@@ -254,7 +266,10 @@ export function RefundPage() {
         or failed charge.
       </p>
       <h3>5. Processing time</h3>
-      <p>Approved refunds are credited back to the original payment method within [FILL IN e.g. 5–7 business days], subject to your bank/payment provider's timelines.</p>
+      <p>
+        Approved refunds are credited back to the original payment method within 5–7 business days, subject
+        to your bank or payment provider's processing timelines.
+      </p>
     </PageLayout>
   )
 }
@@ -286,13 +301,15 @@ export function SecurityPage() {
       </p>
       <h3>Infrastructure</h3>
       <p>
-        [FILL IN: name your actual hosting/infrastructure provider(s) here, e.g. AWS / GCP / Azure / your VPS
-        provider, and where servers are located.]
+        We use secure third-party hosting and infrastructure services to operate the Service. Access to
+        infrastructure is restricted to authorised personnel and service providers where required, and we
+        take reasonable measures to protect data against unauthorized access, loss, misuse, or alteration.
       </p>
       <h3>Responsible disclosure</h3>
       <p>
-        If you believe you've found a security issue in Nexora Chat, please report it to [FILL IN security
-        contact email] — we take these reports seriously and will respond promptly.
+        If you believe you've found a security issue in Nexora Chat, please report it to
+        <a href="mailto:vijayprajapati24646@gmail.com"> vijayprajapati24646@gmail.com</a> — we take these
+        reports seriously and will respond promptly.
       </p>
       <p style={{ marginTop: 18 }}>
         For how we handle personal data more broadly, see our <a href="#/privacy">Privacy Policy</a>.
@@ -308,11 +325,11 @@ export function ContactPage() {
       <div className="policy-contact-grid">
         <div>
           <h4>Support email</h4>
-          <p>[FILL IN e.g. support@nexorachat.online]</p>
+          <p><a href="mailto:vijayprajapati24646@gmail.com">vijayprajapati24646@gmail.com</a></p>
         </div>
         <div>
           <h4>Business name</h4>
-          <p>[FILL IN legal entity name]</p>
+          <p>Vijay Prajapati</p>
         </div>
         <div>
           <h4>Registered address</h4>
@@ -320,7 +337,7 @@ export function ContactPage() {
         </div>
         <div>
           <h4>Phone</h4>
-          <p>[FILL IN support number, optional]</p>
+          <p>9205483945</p>
         </div>
       </div>
       <p style={{ marginTop: 18 }}>
