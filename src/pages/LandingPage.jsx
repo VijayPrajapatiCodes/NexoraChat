@@ -1,4 +1,4 @@
-import React from 'react'
+
 
 const NAV = [
   { href: '#/about', label: 'About' },
@@ -256,6 +256,7 @@ export default function LandingPage() {
         </div>
         <div className="landing-footer-bottom">
           <span>© {new Date().getFullYear()} Nexora Technologies. All rights reserved.</span>
+          <span>Website Version: 1.1 · Last updated: 30 August 2026</span>
         </div>
       </footer>
     </div>
