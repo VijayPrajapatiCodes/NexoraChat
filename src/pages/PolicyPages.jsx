@@ -80,7 +80,8 @@ export function AboutPage() {
         Legal name: <b>Vijay Prajapati</b><br />
         Registered address: <b>C Block, Govindpuram, Ghaziabad, Uttar Pradesh - 20105</b><br />
         Email: <b>vijayprajapati24646@gmail.com</b><br />
-        Phone: <b>9205483945</b>
+        Phone: <b>9205483945</b><br />
+        Website: <b>https://web.nexorachat.online/</b>
       </p>
     </PageLayout>
   )
@@ -125,8 +126,9 @@ export function PricingPage() {
 
 export function PrivacyPage() {
   return (
-    <PageLayout title="Privacy Policy" updated="28 August 2026">
+    <PageLayout title="Privacy Policy" updated="30 August 2026">
       <p>
+        <strong>Policy Version: 1.1</strong><br />
         This Privacy Policy explains how Nexora Chat ("we", "our", "us") collects, uses, and protects
         information when you use our messaging and video calling service (the "Service").
       </p>
@@ -186,8 +188,9 @@ export function PrivacyPage() {
 
 export function TermsPage() {
   return (
-    <PageLayout title="Terms & Conditions" updated="28 August 2026">
+    <PageLayout title="Terms & Conditions" updated="30 August 2026">
       <p>
+        <strong>Version: 1.1</strong><br />
         These Terms & Conditions ("Terms") govern your use of Nexora Chat (the "Service"), operated by
         Vijay Prajapati ("we", "us"). By using the Service, you agree to these Terms.
       </p>
@@ -235,8 +238,9 @@ export function TermsPage() {
 
 export function RefundPage() {
   return (
-    <PageLayout title="Refund & Cancellation Policy" updated="28 August 2026">
+    <PageLayout title="Refund & Cancellation Policy" updated="30 August 2026">
       <p>
+        <strong>Policy Version: 1.1</strong><br />
         This Refund & Cancellation Policy applies to any paid plans or features purchased through Nexora
         Chat. Free features do not require payment. For paid subscriptions, the applicable price and billing
         period are shown before payment is completed.
@@ -322,6 +326,11 @@ export function ContactPage() {
   return (
     <PageLayout title="Contact Us">
       <p>We're happy to help with questions about your account, billing, privacy, or anything else.</p>
+      <p>
+        <strong>Legal Name:</strong> Vijay Prajapati<br />
+        <strong>Email:</strong> <a href="mailto:vijayprajapati24646@gmail.com">vijayprajapati24646@gmail.com</a><br />
+        <strong>Mobile:</strong> 9205483945
+      </p>
       <div className="policy-contact-grid">
         <div>
           <h4>Support email</h4>
