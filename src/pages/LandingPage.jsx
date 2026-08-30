@@ -1,4 +1,4 @@
-
+import React from 'react'
 
 const NAV = [
   { href: '#/about', label: 'About' },
