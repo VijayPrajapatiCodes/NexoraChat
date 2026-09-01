@@ -183,42 +183,132 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="landing-usecases landing-legal">
-        <div className="landing-section-head">
+      <section
+        className="landing-usecases landing-legal"
+        style={{
+          width: '100%',
+          maxWidth: '1100px',
+          margin: '0 auto',
+          padding: '72px 24px',
+          textAlign: 'center',
+        }}
+      >
+        <div
+          className="landing-section-head"
+          style={{
+            textAlign: 'center',
+            maxWidth: '760px',
+            margin: '0 auto 34px',
+          }}
+        >
           <h2>Legal & Business Information</h2>
           <p>
             Nexora Chat is a product and brand operated by <strong>Vijay Prajapati</strong>.
           </p>
         </div>
-        <div className="landing-usecases-grid">
-          <div className="landing-usecase-card">
+
+        <div
+          className="landing-usecases-grid"
+          style={{
+            width: '100%',
+            maxWidth: '1050px',
+            margin: '0 auto',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+            gap: '20px',
+          }}
+        >
+          <div
+            className="landing-usecase-card"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              minHeight: '150px',
+              padding: '24px 18px',
+            }}
+          >
             <div className="landing-usecase-icon">👤</div>
             <div>
               <h3>Legal Name</h3>
               <p>Vijay Prajapati</p>
             </div>
           </div>
-          <div className="landing-usecase-card">
+
+          <div
+            className="landing-usecase-card"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              minHeight: '150px',
+              padding: '24px 18px',
+            }}
+          >
             <div className="landing-usecase-icon">✉️</div>
             <div>
               <h3>Email</h3>
-              <p><a href="mailto:vijayprajapati24646@gmail.com">vijayprajapati24646@gmail.com</a></p>
+              <p>
+                <a href="mailto:vijayprajapati24646@gmail.com">vijayprajapati24646@gmail.com</a>
+              </p>
             </div>
           </div>
-          <div className="landing-usecase-card">
+
+          <div
+            className="landing-usecase-card"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              minHeight: '150px',
+              padding: '24px 18px',
+            }}
+          >
             <div className="landing-usecase-icon">📱</div>
             <div>
               <h3>Mobile</h3>
               <p>9205483945</p>
             </div>
           </div>
-          <div className="landing-usecase-card">
+
+          <div
+            className="landing-usecase-card"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              minHeight: '150px',
+              padding: '24px 18px',
+            }}
+          >
             <div className="landing-usecase-icon">🌐</div>
             <div>
               <h3>Website</h3>
-              <p><a href="https://web.nexorachat.online/">web.nexorachat.online</a></p>
+              <p>
+                <a href="https://web.nexorachat.online/">web.nexorachat.online</a>
+              </p>
             </div>
           </div>
+        </div>
+
+        <div
+          style={{
+            marginTop: '24px',
+            textAlign: 'center',
+            fontSize: '12px',
+            fontWeight: 600,
+            color: 'var(--t3)',
+          }}
+        >
+          Website Version: 1.1 · Last updated: 30 August 2026
         </div>
       </section>
 
