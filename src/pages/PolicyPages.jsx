@@ -29,15 +29,21 @@ export function PageLayout({ title, updated, children }) {
         <div className="policy-card">
           <h1>{title}</h1>
           {updated && <div className="policy-updated">Last updated: {updated}</div>}
+          <div className="policy-updated">Website Version: 1.1</div>
           <div className="policy-content">{children}</div>
         </div>
       </div>
       <footer className="policy-footer">
-        <span>© {new Date().getFullYear()} Nexora Technologies. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} Nexora Chat. Operated by Vijay Prajapati. All rights reserved.</span>
         <div className="policy-footer-links">
           {NAV.slice(1).map((n) => (
             <a key={n.href} href={n.href}>{n.label}</a>
           ))}
+        </div>
+        <div className="policy-footer-legal">
+          <span>Legal Name: Vijay Prajapati</span>
+          <span>Email: <a href="mailto:vijayprajapati24646@gmail.com">vijayprajapati24646@gmail.com</a></span>
+          <span>Mobile: 9205483945</span>
         </div>
       </footer>
     </div>
@@ -73,7 +79,7 @@ export function AboutPage() {
       </p>
       <h3>Who we are</h3>
       <p>
-        Nexora Chat is a software product operated by Vijay Prajapati, focused on building secure,
+        Nexora Chat is a software product and brand operated by Vijay Prajapati, focused on building secure,
         privacy-first communication and software solutions for individual and business users.
       </p>
       <p>
@@ -347,6 +353,10 @@ export function ContactPage() {
         <div>
           <h4>Phone</h4>
           <p>9205483945</p>
+        </div>
+        <div>
+          <h4>Website</h4>
+          <p>https://web.nexorachat.online/</p>
         </div>
       </div>
       <p style={{ marginTop: 18 }}>
