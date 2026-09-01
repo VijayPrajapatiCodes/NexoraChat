@@ -183,6 +183,21 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <section className="landing-legal">
+        <div className="landing-section-head">
+          <h2>Legal & Business Information</h2>
+          <p>
+            Nexora Chat is operated by <strong>Vijay Prajapati</strong>.
+          </p>
+        </div>
+        <div className="landing-legal-info">
+          <p><strong>Legal Name:</strong> Vijay Prajapati</p>
+          <p><strong>Email:</strong> <a href="mailto:vijayprajapati24646@gmail.com">vijayprajapati24646@gmail.com</a></p>
+          <p><strong>Mobile:</strong> 9205483945</p>
+          <p><strong>Website:</strong> https://web.nexorachat.online/</p>
+        </div>
+      </section>
+
       <section className="landing-products">
         <div className="landing-section-head">
           <h2>Our products</h2>
@@ -255,7 +270,7 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="landing-footer-bottom">
-          <span>© {new Date().getFullYear()} Nexora Technologies. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} Nexora Chat. Operated by Vijay Prajapati. All rights reserved.</span>
           <span>Website Version: 1.1 · Last updated: 30 August 2026</span>
         </div>
       </footer>
